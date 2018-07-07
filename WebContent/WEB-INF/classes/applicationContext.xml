@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+      
+       <!-- 
+       		注解驱动，包扫描 
+       		不要写com.bill.sm.*,虽然没有问题，但是效率会非常低，因为会扫描com.bill.sm下的所有包
+       -->
+       <context:component-scan base-package="com.bill.sm.controller,com.bill.sm.service"/>
+       
+       <!-- 数据源 -->
+       <bean id="basicDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+			<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+			<property name="url" value="jdbc:mysql://localhost:3306/my_logger?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=GMT%2B8&amp;useSSL=false"/>
+			<property name="username" value="root"/>
+			<property name="password" value="bgbtech123456"/>
+		</bean>
+       
+       <!-- 配置工具类，让工具帮助自动获取SQLSession对象 -->
+       <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+       		<!-- 配置数据源 -->
+       		<property name="dataSource" ref="basicDataSource"/>
+       		<!-- 配置dao关联的mapper xml文件 -->
+       		<property name="mapperLocations" value="com/bill/sm/model/dao/*.xml"/>
+       </bean>
+       
+       <!-- 将dao类中的方法与xxxmapper.xml中的SQL语句关联 -->
+       <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+       		<!-- 会自动与上面的sqlSessionFactoryBean关联起来 -->
+       		<property name="basePackage" value="com.bill.sm.model.dao"/>
+       </bean>
+       
+</beans>
